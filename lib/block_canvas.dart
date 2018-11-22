@@ -76,11 +76,12 @@ class CaptchaBackgroundCanvas extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // canvas.drawColor(Colors.green, BlendMode.color);
     // canvas.drawCircle(origin, 30, backgroundPaint);
-    print("size: $size");
+    print("block canvas size: $size");
     // canvas.drawImage(backgroundImage, Offset(0, 0), Paint());
     // canvas.drawColor(Colors.red, BlendMode.color);
     _drawShadowArea(canvas, shadowPosition, blockSize, shadowAreaPaint);
-    _drawBlock(canvas, blockImage, blockPosition, Paint());
+    var dy = shadowPosition.dy - blockSize.height;
+    _drawBlock(canvas, blockImage, Offset(blockPosition.dx, dy), Paint());
   }
 
   @override
@@ -95,6 +96,7 @@ class CaptchaBackgroundCanvas extends CustomPainter {
   }
 
   void _drawBlock(Canvas canvas, ui.Image image, Offset position, Paint paint) {
+    print("block position($position)");
     canvas.drawImage(image, position, paint);
   }
 

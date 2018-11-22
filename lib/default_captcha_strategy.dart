@@ -12,8 +12,7 @@ class DefaultCaptchaStrategy {
     Radius r = Radius.circular(dx / 10);
 
     Path path = new Path();
-    path.addRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(startX, startY, dx, dy), r));
+    path.addOval(Rect.fromCircle(center: origin, radius: size.width));
     return path;
   }
 
@@ -41,8 +40,8 @@ class DefaultCaptchaStrategy {
   Paint getBlockBorderPaint() {
     Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 10.0
-      ..color = Colors.greenAccent;
+      ..strokeWidth = 2
+      ..color = Colors.greenAccent.withOpacity(0.5);
 
     return paint;
   }
