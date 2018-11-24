@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'default_captcha_strategy.dart';
 import 'dart:ui' as ui;
+import 'util/image_utils.dart';
 
 class BlockCanvas extends CustomPainter {
   Offset shadowPositon;
@@ -76,12 +77,13 @@ class CaptchaBackgroundCanvas extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // canvas.drawColor(Colors.green, BlendMode.color);
     // canvas.drawCircle(origin, 30, backgroundPaint);
-//    print("block canvas size: $size");
-    // canvas.drawImage(backgroundImage, Offset(0, 0), Paint());
+    print("background canvas size: $size");
     // canvas.drawColor(Colors.red, BlendMode.color);
+    // ImageUtil.paintImage(
+    // backgroundImage, Offset.zero & size, canvas, Paint(), BoxFit.fill);
     _drawShadowArea(canvas, shadowPosition, blockSize, shadowAreaPaint);
-    // var dy = shadowPosition.dy - blockSize.height;
-    // _drawBlock(canvas, blockImage, Offset(blockPosition.dx, dy), Paint());
+    var dy = shadowPosition.dy - blockSize.height;
+    _drawBlock(canvas, blockImage, Offset(blockPosition.dx, dy), Paint());
   }
 
   @override
