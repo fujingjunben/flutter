@@ -3,6 +3,8 @@ import 'dart:math';
 import 'captcha_strategy.dart';
 import 'dart:ui' as ui;
 import 'MyHomePage.dart';
+import 'test2.dart';
+import 'test3.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Startup Name Generator',
-      home: MyHomePage(),
+      home: Test2(),
     );
   }
 

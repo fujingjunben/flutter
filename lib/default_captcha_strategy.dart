@@ -4,13 +4,7 @@ import 'dart:math';
 class DefaultCaptchaStrategy {
   @override
   Path getBlockShape(Offset origin, Size size) {
-    print("${this.toString()}@ size: $size; origin: $origin");
-    var startX = origin.dx;
-    var startY = origin.dy;
-    double dx = size.width / 4;
-    double dy = size.height / 4;
-    Radius r = Radius.circular(dx / 10);
-
+    // print("${this.toString()}@ size: $size; origin: $origin");
     Path path = new Path();
     path.addOval(Rect.fromCircle(center: origin, radius: size.width));
     return path;

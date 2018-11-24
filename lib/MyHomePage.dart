@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       return CustomPaint(
         foregroundPainter: CaptchaBackgroundCanvas(
-          shadowPosition: shadowPosition,
+          shadowPosition: Offset(150, dy),
           blockSize: Size(size, size),
           canvasSize: Size(width, height),
           blockPosition: Offset(dx, dy),
@@ -102,9 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           width: width,
           height: height,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(imageFile), fit: BoxFit.fill)),
+          color: Colors.green,
+          // decoration: BoxDecoration(
+          // image: DecorationImage(
+          // image: AssetImage(imageFile), fit: BoxFit.fill)),
         ),
       );
     }
@@ -114,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ui.Image originImage = await ImageUtil.loadImage(key);
     // ui.Image clipImage = await _clipImage(
     // originImage, shadowPosition, Size(width, height), blockSize);
-    ui.Image clipImage = await createBlock();
+    ui.Image clipImage = await createBlock(originImage);
     // ui.Image clipImage = await block(
     // originImage, shadowPosition, Size(width, height), blockSize);
     setState(() {
@@ -126,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _changeBlockImage() {
     // _clipImage(image, Offset(dx, dy), Size(width, height), Size(size, size))
-    createBlock().then((value) {
+    createBlock(image).then((value) {
       setState(() {
         blockImage = value;
       });
@@ -155,124 +156,38 @@ class _MyHomePageState extends State<MyHomePage> {
     return frame.image;
   }
 
-  Future<ui.Image> createBlock() async {
+  Future<ui.Image> createBlock(ui.Image image) async {
     print("dx: $dx; dy: $dy");
     ui.PictureRecorder recorder = new ui.PictureRecorder();
-    Canvas c = new Canvas(recorder, Rect.fromLTWH(0, 0, width, height));
-    // var rect = new Rect.fromLTWH(20, dy, 100.0, 100.0);
-    var rect = new Rect.fromCircle(center: Offset(dx, dy), radius: size + 10);
-    Path path = Path();
-    path.addOval(rect);
-    c.clipPath(path);
+    Canvas c = new Canvas(recorder);
+    // c.drawImage(image, Offset(0, 0), Paint());
+    // var rect = new Rect.fromLTWH(50, 50, 100, 100);
+    // var rect = new Rect.fromCircle(center: Offset(dx, dy), radius: size + 10);
     // c.clipRect(rect);
-    c.drawColor(Colors.white, BlendMode.color);
+    // c.drawColor(Colors.white, BlendMode.color);
 
     final paint = new Paint();
-    paint.strokeWidth = 2.0;
+    paint.strokeWidth = 0;
     paint.color = const Color(0xFF333333);
     paint.style = PaintingStyle.fill;
 
-    final offset = new Offset(dx, dy);
-    c.drawCircle(offset, size, paint);
+    final offset = new Offset(50, 50);
+    // c.drawCircle(offset, 10, paint);
+    Path path = Path();
+    // path.addOval(new Rect.fromCircle(center: Offset(50, 50), radius: 10));
+    // c.clipPath(path);
+    c.drawColor(Colors.yellow, BlendMode.color);
+    c.drawCircle(offset, 10, paint);
+
     var picture = recorder.endRecording();
 
-    var w = dx + size;
-    var h = dy + size;
+    var w = width;
+    var h = height;
     final pngBytes = await picture
         .toImage(w.toInt(), h.toInt())
         .toByteData(format: ui.ImageByteFormat.png);
 
     //Aim #1. Upade _image with generated image.
-    var codec = await ui.instantiateImageCodec(pngBytes.buffer.asUint8List());
-    var frame = await codec.getNextFrame();
-    return frame.image;
-  }
-
-  Future<ui.Image> block(ui.Image originImage, Offset origin, Size canvasSize,
-      Size blockSize) async {
-    print("canvasSize: $canvasSize");
-    print("origin: $origin");
-    print("blockSize: $blockSize");
-    ui.PictureRecorder recorder = ui.PictureRecorder();
-    Canvas canvas = Canvas(recorder);
-    // canvas.drawImage(originImage, Offset(0, 0), Paint());
-    // canvas.clipPath(
-    // octagon.getBlockShape(origin, blockSize.width, blockSize.height));
-    canvas.clipRect(Rect.fromLTWH(70, 70, 100, 100));
-    Paint blockStrokePaint = Paint()
-      ..color = Colors.yellow
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(50, 50), 50, blockStrokePaint);
-    ui.Picture picture = recorder.endRecording();
-
-    final pngBytes = await picture
-        .toImage(70, 70)
-        .toByteData(format: ui.ImageByteFormat.png);
-
-    var codec = await ui.instantiateImageCodec(pngBytes.buffer.asUint8List());
-    var frame = await codec.getNextFrame();
-    return frame.image;
-  }
-}
-
-class HomePage extends StatelessWidget {
-  final Offset shadowPosition = Offset(100, 100);
-  final Size blockSize = Size(100, 100);
-  final double width = 300;
-  final double height = 300;
-  final String imageFile = "images/ocean.jpeg";
-  ui.Image image;
-  ui.Image blockImage;
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("测试"),
-        ),
-        body: Column(children: <Widget>[
-          Slider(
-            value: 0,
-            min: 0,
-            max: 400,
-            onChanged: null,
-          ),
-        ]));
-  }
-
-  Future<CaptchaImageStore> _loadImage(String key) async {
-    ui.Image originImage = await ImageUtil.loadImage(key);
-    ui.Image clipImage = await _clipImage(
-        originImage, shadowPosition, Size(width, height), blockSize);
-
-    return CaptchaImageStore(origin: originImage, clip: clipImage);
-  }
-
-  Future<ui.Image> _clipImage(ui.Image originImage, Offset shadowPosition,
-      Size canvasSize, Size blockSize) async {
-    DefaultCaptchaStrategy strategy = DefaultCaptchaStrategy();
-    Path blockShape = strategy.getBlockShape(shadowPosition, blockSize);
-    ui.PictureRecorder recorder = ui.PictureRecorder();
-    Canvas canvas = Canvas(
-        recorder, Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height));
-
-    canvas.drawImage(originImage, Offset(0, 0), Paint());
-
-    Path blockBorderShape = strategy.getBlockShape(
-        Offset(shadowPosition.dx + 10, shadowPosition.dy + 10),
-        Size(blockSize.width + 10, blockSize.height + 10));
-
-    canvas.drawPath(blockShape, strategy.getBlockBorderPaint());
-
-    canvas.clipPath(blockBorderShape);
-    ui.Picture picture = recorder.endRecording();
-
-    final pngBytes = await picture
-        .toImage(
-            (blockSize.width + 30).toInt(), (blockSize.height + 30).toInt())
-        .toByteData(format: ui.ImageByteFormat.png);
-
     var codec = await ui.instantiateImageCodec(pngBytes.buffer.asUint8List());
     var frame = await codec.getNextFrame();
     return frame.image;

@@ -110,11 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CustomPaint(
-              painter: MyCustomPainter(image: canvasImage),
-              child: SizedBox(
-                width: 300,
-                height: 300,
+            Container(
+              color: Colors.yellow.withOpacity(0.2),
+              child: CustomPaint(
+                painter: MyCustomPainter(image: canvasImage),
               ),
             )
           ],
@@ -142,7 +141,9 @@ class MyCustomPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     print(image.toString());
     print("size: " + size.width.toString() + 'x' + size.height.toString());
-    canvas.drawImage(image, Offset(20, 20), customPaint);
+    if (image != null) {
+      canvas.drawImage(image, Offset(20, 20), customPaint);
+    }
   }
 
   @override

@@ -39,6 +39,7 @@ flutter:
   uses-material-design: true
   assets:
     - images/ocean.jpeg
+    - images/snow.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
