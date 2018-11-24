@@ -111,12 +111,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _loadImage(String key) async {
     ui.Image originImage = await ImageUtil.loadImage(key);
-    // ui.Image clipImage = await _clipImage(
-    // originImage,
-    // Offset(blockCenterX, blockCenterY),
-    // Size(width, height),
-    // Size(size, size));
-    ui.Image clipImage = await createBlock(originImage);
+    ui.Image clipImage = await _clipImage(
+        originImage,
+        Offset(blockCenterX, blockCenterY),
+        Size(width, height),
+        Size(size, size));
+    // ui.Image clipImage = await createBlock(originImage);
     // ui.Image clipImage = await block(
     // originImage, shadowPosition, Size(width, height), blockSize);
     setState(() {
@@ -126,9 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _changeBlockImage() {
-    createBlock(image)
-        // _clipImage(image, Offset(blockCenterX, blockCenterY), Size(width, height),
-        // Size(size, size))
+    // createBlock(image)
+    _clipImage(image, Offset(blockCenterX, blockCenterY), Size(width, height),
+            Size(size, size))
         .then((value) {
       setState(() {
         blockImage = value;
@@ -143,18 +143,23 @@ class _MyHomePageState extends State<MyHomePage> {
     ui.PictureRecorder recorder = ui.PictureRecorder();
     Canvas canvas = Canvas(
         recorder, Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height));
-    // canvas.drawImage(originImage, Offset(0, 0), Paint());
-    // canvas.translate(
-    // blockSize.width - blockCenter.dx, blockSize.height - blockCenter.dy);
+    canvas.translate(
+        blockSize.width - blockCenter.dx, blockSize.height - blockCenter.dy);
 
-    // canvas.clipPath(blockShape);
-    // canvas.drawColor(Colors.yellow, BlendMode.color);
-    // canvas.drawImage(originImage, Offset(0, 0), Paint());
-    canvas.drawColor(Colors.yellow, BlendMode.color);
+    canvas.clipPath(blockShape);
+
+    Paint paint = Paint()
+      ..color = Colors.yellow
+      ..colorFilter = ColorFilter.mode(Colors.yellow, BlendMode.color)
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 5;
+
+    ImageUtil.paintImage(
+        image, Offset.zero & canvasSize, canvas, paint, BoxFit.fill);
     ui.Picture picture = recorder.endRecording();
 
-    double imageWidth = canvasSize.width;
-    double imageHeight = canvasSize.height;
+    double imageWidth = blockSize.width * 2;
+    double imageHeight = blockSize.height * 2;
     final pngBytes = await picture
         .toImage(imageWidth.ceil(), imageHeight.ceil())
         .toByteData(format: ui.ImageByteFormat.png);
