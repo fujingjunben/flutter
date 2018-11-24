@@ -22,7 +22,7 @@ class _Test2State extends State<Test2> {
   final String imageFile = "images/snow.jpg";
   Widget blockWidget;
   FractionalOffset offset;
-  double offsetWidth = 00;
+  double offsetWidth = 300;
 
   @override
   void initState() {
@@ -35,55 +35,59 @@ class _Test2State extends State<Test2> {
   Widget build(BuildContext context) {
     print("screen width: $width");
     return Scaffold(
-      appBar: AppBar(
-        title: Text("ClipPath test"),
-      ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(imageFile), fit: BoxFit.fill)),
+        appBar: AppBar(
+          title: Text("ClipPath test"),
         ),
-        Container(
-          color: Colors.yellow.withOpacity(0.2),
-          child: blockWidget,
-        )
-      ]),
-    );
-    // body: Column(
-    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //     children: <Widget>[
-    //       Text("当前位置：$dx"),
-    //       Stack(
-    //         children: <Widget>[
-    //           Container(alignment: Alignment.center, child: _getCaptcha()),
-    //           Container(
-    //               alignment: offset,
-    //               child: Container(
-    //                   color: Colors.yellow.withOpacity(0.2),
-    //                   child: blockWidget))
-    //         ],
-    //       ),
-    //       Slider(
-    //         value: dx,
-    //         min: 0,
-    //         max: width,
-    //         onChanged: (v) {
-    //           _changeBlockPosition(v.toDouble());
-    //         },
-    //       ),
-    //       _changeBlockSize(),
-    //     ]),
-    // floatingActionButton: FloatingActionButton(
-    //   onPressed: () {
-    //     _getPosition();
-    //     _getSize();
-    //   },
-    //   tooltip: "生成新滑块",
-    //   child: Icon(Icons.add),
-    // ));
+        //   body: Column(
+        //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //       children: <Widget>[
+        //         Container(
+        //           width: width,
+        //           height: height,
+        //           decoration: BoxDecoration(
+        //               image: DecorationImage(
+        //                   image: AssetImage(imageFile), fit: BoxFit.fill)),
+        //         ),
+        //         Container(
+        //           child: Transform.translate(
+        //             offset: Offset(-blockCenterX + size, 0),
+        //             child: blockWidget,
+        //           ),
+        //         ),
+        //       ]),
+        // );
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text("当前位置：$dx"),
+              Stack(
+                children: <Widget>[
+                  Container(alignment: Alignment.center, child: _getCaptcha()),
+                  Container(
+                      alignment: offset,
+                      child: Container(
+                          color: Colors.yellow.withOpacity(0.2),
+                          child: blockWidget))
+                ],
+              ),
+              Slider(
+                value: dx,
+                min: 0,
+                max: width,
+                onChanged: (v) {
+                  _changeBlockPosition(v.toDouble());
+                },
+              ),
+              _changeBlockSize(),
+            ]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _getPosition();
+            _getSize();
+          },
+          tooltip: "生成新滑块",
+          child: Icon(Icons.add),
+        ));
   }
 
   Widget _changeBlockSize() {
@@ -143,33 +147,36 @@ class _Test2State extends State<Test2> {
 
   Widget _getBlock() {
     _resetBlockOffset();
-    return Stack(key: _blockKey, children: [
-      ClipPath(
-        clipper: BlockClipper(
-          origin: Offset(blockCenterX, dy),
-          blockSize: Size(size, size),
-        ),
-        child: Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: AssetImage(imageFile),
-            fit: BoxFit.fill,
-          )),
-        ),
-      ),
-      CustomPaint(
-        painter: BorderPaint(
-          origin: Offset(blockCenterX, dy),
-          radius: size,
-        ),
-        child: SizedBox(
-          width: width,
-          height: height,
-        ),
-      )
-    ]);
+    return Transform.translate(
+        key: _blockKey,
+        offset: Offset(-blockCenterX + size, 0),
+        child: Stack(children: [
+          ClipPath(
+            clipper: BlockClipper(
+              origin: Offset(blockCenterX, dy),
+              blockSize: Size(size, size),
+            ),
+            child: Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                image: AssetImage(imageFile),
+                fit: BoxFit.fill,
+              )),
+            ),
+          ),
+          CustomPaint(
+            painter: BorderPaint(
+              origin: Offset(blockCenterX, dy),
+              radius: size,
+            ),
+            child: SizedBox(
+              width: width,
+              height: height,
+            ),
+          )
+        ]));
   }
 
   _changeBlockImage() {
